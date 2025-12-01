@@ -13,7 +13,7 @@ void exit_with_error(const char *message) {
 }
 
 int main(int argc, char *argv[]) {
-    // 使い方のチェック
+    // 引数の指定方法
     if (argc != 4) {
         printf("Usage: %s <IP_ADDRESS> <PORT> <QUERY>\n", argv[0]);
         printf("Example: %s 127.0.0.1 8080 \"10+20*3\"\n", argv[0]);
