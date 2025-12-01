@@ -5,16 +5,26 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 
-#define PORT 8080
 #define BUFFER_SIZE 1024
-#define SERVER_IP "127.0.0.1"
 
 void exit_with_error(const char *message) {
     perror(message);
     exit(EXIT_FAILURE);
 }
 
-int main() {
+int main(int argc, char *argv[]) {
+    // 使い方のチェック
+    if (argc != 4) {
+        printf("Usage: %s <IP_ADDRESS> <PORT> <QUERY>\n", argv[0]);
+        printf("Example: %s 127.0.0.1 8080 \"10+20*3\"\n", argv[0]);
+        return 1;
+    }
+
+    // 引数を変数に格納
+    char *server_ip = argv[1];
+    int server_port = atoi(argv[2]);
+    char *query_string = argv[3];
+
     int network_socket;
     struct sockaddr_in server_address;
 
@@ -22,9 +32,9 @@ int main() {
     if (network_socket < 0) exit_with_error("socket failed");
 
     server_address.sin_family = AF_INET;
-    server_address.sin_port = htons(PORT);
+    server_address.sin_port = htons(server_port);
     // 文字列を IPv4用バイナリ形式に変換して server_address.sin_addr に格納
-    if (inet_pton(AF_INET, SERVER_IP, &server_address.sin_addr) <= 0) {
+    if (inet_pton(AF_INET, server_ip, &server_address.sin_addr) <= 0) {
         exit_with_error("Invalid address");
     }
 
@@ -40,7 +50,7 @@ int main() {
     // 計算式を指定
     // 例: 100 + 50 * 2 - 10 
     // (左から計算するので 150 * 2 = 300, 300 - 10 = 290 になる)
-    const char *query = "100+50*2-10";
+    const char *query = query_string;
     
     printf("Sending query: %s\n", query);
     

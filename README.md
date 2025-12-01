@@ -12,11 +12,11 @@
 
 ### ファイル構成
 
-* **`server.c`**
+* **`simple_server.c`**
     * ポート8080で待機
     * HTTPリクエストの解析と計算処理
     * 結果のレスポンス送信
-* **`client.c`**
+* **`simple_client.c`**
     * サーバーへの接続
     * 計算クエリ（例: `100+50*2`）の送信
     * 結果の受信と表示
@@ -57,6 +57,6 @@
     * `gcc simple_server.c -o simple_server.out`
     * `gcc simple_client.c -o simple_client.out`
 2.  **サーバー起動** (ターミナル1)
-    * `./simple_server.out`
+    * `./simple_server.out 8080`
 3.  **クライアント実行** (ターミナル2)
-    * `./simple_client.out`
+    * `./simple_client.out 127.0.0.1 8080 "10+20*3"`

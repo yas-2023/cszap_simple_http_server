@@ -6,7 +6,6 @@
 #include <sys/socket.h> //ソケット通信, socket, bindなど
 #include <ctype.h> // 数字判定用
 
-#define PORT 8080
 #define DEFAULT_PORT 8080
 #define BUFFER_SIZE 1024
 #define CALC_QUERY_PREFIX "GET /calc?query="
@@ -131,13 +130,21 @@ void handle_client(int client_socket) {
     close(client_socket);
 }
 
-int main() {
+int main(int argc, char *argv[]) {
     int server_socket;
     int client_socket;
     struct sockaddr_in server_address;
     struct sockaddr_in client_address;
     int option_value = 1;
     socklen_t client_address_length = sizeof(client_address);
+
+    // デフォルトポートを設定
+    int port_number = DEFAULT_PORT;
+
+    // 引数がある場合はポート番号を上書き
+    if (argc > 1) {
+        port_number = atoi(argv[1]);
+    }
 
     server_socket = socket(AF_INET, SOCK_STREAM, 0); // AF_INET: IPv4, SOCK_STREAM: TCP
     if (server_socket == 0) exit_with_error("socket failed");
@@ -149,7 +156,7 @@ int main() {
 
     server_address.sin_family = AF_INET;
     server_address.sin_addr.s_addr = INADDR_ANY;
-    server_address.sin_port = htons(PORT); //ビッグエンディアンに変換
+    server_address.sin_port = htons(port_number); //ビッグエンディアンに変換
 
     if (bind(server_socket, (struct sockaddr *)&server_address, sizeof(server_address)) < 0) {
         exit_with_error("bind failed");
@@ -159,7 +166,7 @@ int main() {
         exit_with_error("listen failed");
     }
 
-    printf("Server is running on port %d (supports +, -, *, /)...\n", PORT);
+    printf("Server is running on port %d (supports +, -, *, /)...\n", port_number);
 
     while (1) {
         client_socket = accept(server_socket, (struct sockaddr *)&client_address, &client_address_length);
